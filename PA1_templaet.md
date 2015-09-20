@@ -7,6 +7,7 @@ This is an R Markdown document prepared for Re-Producible Research Assignment1. 
 This section of R code loads the data into dataSet then presents first 20 records as data sample.
 
 
+
 ```r
 dataSet <- read.csv("activity.csv")
 head(dataSet, 20)
@@ -307,21 +308,10 @@ detach(fdataSet)
 
 
 ```r
-## Calculate Steps per interval for Weekdays
-wdstepsPerInterval <- sqldf("select avg(steps) as avgSteps, interval from fdataSet where weekdays=\"weekday\" group by interval")
-
-westepsPerInterval <- sqldf("select avg(steps) as avgSteps, interval from fdataSet where weekdays=\"weekend\" group by interval")
-
-## Plot - panel plot
-par(mfcol = c(2, 1))
-
-plot(wdstepsPerInterval$interval, wdstepsPerInterval$avgSteps, type = "l", col = "blue", 
-    xlab = "5 Minutes interval", ylab = "Average number of steps", main = "Average number of steps per interval - Weekdays", 
-    ylim = range(0:250), xlim = range(0:2400))
-
-plot(westepsPerInterval$interval, westepsPerInterval$avgSteps, type = "l", col = "blue", 
-    xlab = "5 Minutes interval", ylab = "Average number of steps", main = "Average number of steps per interval - Weekend", 
-    ylim = range(0:250), xlim = range(0:2400))
+library(lattice)
+stepsPerInterval <- sqldf("select avg(steps) as avgSteps, interval from fdataSet group by interval")
+xyplot(stepsPerInterval$avgSteps ~ stepsPerInterval$interval | c("Weekday", 
+    "Weekend"), type = "l", layout = c(1, 2), xlab = "Interval", ylab = "Number of steps")
 ```
 
 ![plot of chunk unnamed-chunk-12](figure/unnamed-chunk-12.png) 
